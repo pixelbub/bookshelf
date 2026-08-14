@@ -109,3 +109,129 @@ code {
   padding: 4px 8px;
   background: var(--code-bg);
 }
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+}
+
+nav {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 20px 40px;
+  border-bottom: 1px solid #ddd;
+}
+
+nav input {
+  flex: 1;
+  padding: 10px;
+}
+
+main {
+  max-width: 1400px;
+  margin: auto;
+  padding: 40px;
+}
+
+.welcome {
+  margin-bottom: 40px;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+  margin-bottom: 50px;
+}
+
+.stats-card {
+  display: flex;
+  gap: 15px;
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.bookshelf {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 25px;
+  margin-bottom: 50px;
+}
+
+.book-cover-container {
+  position: relative;
+}
+
+.book-cover {
+  width: 100%;
+  aspect-ratio: 2 / 3;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.favorite-button,
+.more-button {
+  position: absolute;
+  top: 10px;
+  border: none;
+  background: white;
+  padding: 8px;
+  border-radius: 50%;
+}
+
+.favorite-button {
+  right: 45px;
+}
+
+.more-button {
+  right: 10px;
+}
+
+.book-info h3 {
+  margin-bottom: 5px;
+}
+
+.book-info p {
+  margin: 0 0 5px;
+}
+
+.book-info span {
+  font-size: 14px;
+  color: #777;
+}
+
+.progress-container {
+  height: 5px;
+  background: #ddd;
+  margin-top: 12px;
+  border-radius: 5px;
+}
+
+.progress-bar {
+  height: 100%;
+  background: #333;
+  border-radius: 5px;
+}
+
+.book-info small {
+  color: #777;
+}
+
+.filter-bar {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 25px;
+}

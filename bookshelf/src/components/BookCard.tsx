@@ -10,7 +10,7 @@ export default function BookCard({ book }: BookCardProps) {
     <div className="book-card">
       <div className="book-cover-container">
         <img
-          src={book.cover}
+          src={book.cover || "/default-cover.png"}
           alt={`Cover of ${book.title}`}
           className="book-cover"
         />

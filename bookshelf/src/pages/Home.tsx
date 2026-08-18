@@ -25,7 +25,6 @@ export default function Home({ books, filteredBooks, searchQuery }: HomeProps) {
       <section>
         <div className="section-header">
           <h2>My Library</h2>
-          <button>+ Add Book</button>
         </div>
 
         <div className="filter-bar">

@@ -7,4 +7,5 @@ export type Book = {
   format: "PDF" | "EPUB";
   progress: number;
   favorite: boolean;
+  file?: File;
 };

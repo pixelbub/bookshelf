@@ -1,11 +1,18 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import Home from "./pages/Home";
 import { books } from "./data/books";
+import type { Book } from "./types/book";
+import UploadModal from "./components/UploadModal";
 
 function App() {
+  const [uploadedFile, setUploadedFile] = useState<File | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
 
-  const filteredBooks = books.filter((book) => {
+  const [library, setLibrary] = useState<Book[]>(books);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [showUploadModal, setShowUploadModal] = useState(false);
+
+  const filteredBooks = library.filter((book) => {
     const query = searchQuery.toLowerCase();
 
     return (
@@ -15,6 +22,62 @@ function App() {
     );
   });
 
+  const handleFileUpload = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const file = event.target.files?.[0];
+
+    if (!file) return;
+
+    setSelectedFile(file);
+    setShowUploadModal(true);
+
+    //const fileName = file.name;
+    //const extension = fileName
+    //.split(".")
+    //.pop()
+    //?.toLowerCase();
+
+    //if(extension !== "pdf" && extension !== "epub"){
+    //  alert("please upload a pdf or epub file");
+    //  return;
+    //}
+
+    //const title = fileName.replace(/\.(pdf|epub)$/i, "");
+
+    /*const format = extension === "pdf" ? "PDF" : "EPUB";
+
+    
+
+    const newBook: Book = {
+      id: Date.now(),
+      title: title,
+      author:"Unknown",
+      fandom:"Unknown",
+      cover: "",
+      format: format,
+      progress: 0,
+      favorite: false,
+      file: file,
+    };
+
+    //check if its aactually uploading
+    console.log("new book:", newBook);
+    */
+  };
+
+  const handleAddBook = (newBook: Book) => {
+    setLibrary((currentLibrary) => [
+      ...currentLibrary,
+      newBook,
+    ]);
+
+    setSelectedFile(null);
+    setShowUploadModal(false);
+  };
+
+  
+
   return (
     <>
       <nav>
@@ -22,6 +85,7 @@ function App() {
 
         <div className="search-container">
           <input
+            className="searchbar"
             type="text"
             placeholder="Search your library..."
             value={searchQuery}
@@ -29,15 +93,53 @@ function App() {
           />
         </div>
 
-        <button>+ Upload Book</button>
-        <button>👤</button>
+      <>
+        <input 
+          type="file" 
+          accept=".pdf,.epub" 
+          id="book-upload" 
+          style={{display: "none"}} 
+          onChange={handleFileUpload}
+        />
+
+        <label htmlFor="book-upload" className="upload-button">
+          + Upload Book
+        </label>
+
+        
+      
+      </>
+
+      <button>👤</button>
+
       </nav>
 
+     
+      {uploadedFile && (
+        <div>
+          <h3>Uploaded Book</h3>
+            <p>{uploadedFile.name}</p>
+            <p>{uploadedFile.type}</p>
+        </div>
+      )}
+
       <Home
-        books={books}
+        books={library}
         filteredBooks={filteredBooks}
         searchQuery={searchQuery}
       />
+
+      {showUploadModal && selectedFile && (
+        <UploadModal
+          file={selectedFile}
+          onClose={() => {
+            setSelectedFile(null);
+            setShowUploadModal(false);
+          }}
+          onAddBook={handleAddBook}
+        />
+      )}
+
     </>
   );
 }

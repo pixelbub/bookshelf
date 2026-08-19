@@ -1,16 +1,32 @@
 //import { Heart, MoreVertical } from "lucide-react";
 import type { Book } from "../types/book";
+import { useState } from "react";
 
 type BookCardProps = {
   book: Book;
+  onDelete: (id: number) => void;
+  onEdit: (book: Book) => void;
+  openMenuId: number | null;
+  setOpenMenuId: (id: number | null) => void;
 };
 
-export default function BookCard({ book }: BookCardProps) {
+
+
+export default function BookCard({ book, onDelete, onEdit, openMenuId, setOpenMenuId, }: BookCardProps) {
+
+  const showMenu = openMenuId === book.id;
+
+  const coverSource = book.cover
+  ? book.cover
+  : book.coverFile
+    ? URL.createObjectURL(book.coverFile)
+    : "/default-cover.png";
+
   return (
     <div className="book-card">
       <div className="book-cover-container">
         <img
-          src={book.cover || "/default-cover.png"}
+          src={coverSource}
           alt={`Cover of ${book.title}`}
           className="book-cover"
         />
@@ -19,9 +35,22 @@ export default function BookCard({ book }: BookCardProps) {
             {book.favorite ? "♥" : "♡"}
         </button>
 
-        <button className="more-button">
+        <button 
+          className="more-button" 
+          onClick={() => 
+            setOpenMenuId(showMenu ? null : book.id)
+          } 
+        >
          ⋮
         </button>
+
+        {showMenu && (
+          <div className="book-menu">
+            <button type="button" onClick={() => onEdit(book)}>Edit</button>
+            <button type="button" onClick={() => onDelete(book.id)}> Delete </button> 
+          </div>
+        )}
+
       </div>
 
       <div className="book-info">

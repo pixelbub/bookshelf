@@ -3,7 +3,8 @@ export type Book = {
   title: string;
   author: string;
   fandom: string;
-  cover: string;
+  cover?: string;
+  coverFile?: File;
   format: "PDF" | "EPUB";
   progress: number;
   favorite: boolean;

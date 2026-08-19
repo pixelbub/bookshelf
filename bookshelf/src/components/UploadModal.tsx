@@ -1,24 +1,50 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { Book } from "../types/book";
 
 type UploadModalProps = {
-  file: File;
+  file?: File;
+  book?: Book;
   onClose: () => void;
   onAddBook: (book: Book) => void;
+  onUpdateBook: (book: Book) => void;
+
 };
+
+
 
 export default function UploadModal({
   file,
+  book,
   onClose,
   onAddBook,
+  onUpdateBook,
 }: UploadModalProps) {
-  const [title, setTitle] = useState(
-    file.name.replace(/\.(pdf|epub)$/i, "")
-  );
+  const [title, setTitle] = useState("");
+  /*
+    file?.name.replace(/\.(pdf|epub)$/i, "") ??
+    ""
+  */
 
-  const [author, setAuthor] = useState("");
-  const [fandom, setFandom] = useState("");
-  const [cover, setCover] = useState("");
+  const [author, setAuthor] = useState(book?.author ?? "");
+  const [fandom, setFandom] = useState(book?.fandom ?? "");
+  const [coverFile, setCoverFile] = useState<File | null>(null);
+  const [coverPreview, setCoverPreview] = useState(book?.cover ?? "");
+
+  useEffect(() => {
+  if (book) {
+    setTitle(book.title);
+    setAuthor(book.author);
+    setFandom(book.fandom);
+    setCoverPreview(book.cover ?? "");
+  } else if (file) {
+    setTitle(
+      file.name.replace(/\.(pdf|epub)$/i, "")
+    );
+    setAuthor("");
+    setFandom("");
+    setCoverPreview("");
+  }
+}, [book, file]);
 
   const handleCoverUpload = (
     event: React.ChangeEvent<HTMLInputElement>
@@ -27,17 +53,35 @@ export default function UploadModal({
 
     if (!image) return;
 
+    setCoverFile(image);
+
     const imageURL = URL.createObjectURL(image);
-    setCover(imageURL);
+    setCoverPreview(imageURL);
   };
 
   const handleSubmit = () => {
+
+    if (book) {
+      const updatedBook: Book = {
+        ...book,
+        title,
+        author,
+        fandom,
+        coverFile: coverFile ?? book.coverFile,
+      };
+
+      onUpdateBook(updatedBook);
+      return;
+    }
+
+    if (!file) return;
+
     const newBook: Book = {
       id: Date.now(),
       title,
       author,
       fandom,
-      cover,
+      coverFile: coverFile ?? undefined,
       format: file.name.toLowerCase().endsWith(".pdf")
         ? "PDF"
         : "EPUB",
@@ -53,18 +97,23 @@ export default function UploadModal({
     <div className="modal-overlay">
       <div className="upload-modal">
 
-        <h2>Add Book</h2>
+        <h2>{book ? "Edit Book" : "Add Book"}</h2>
 
         <p>
-          File: <strong>{file.name}</strong>
+          File:{" "} 
+          <strong>
+            {book
+              ? `${book.title}.${book.format.toLowerCase()}`
+              : file?.name}
+          </strong>
         </p>
 
         <div>
           <label>Cover</label>
 
-          {cover && (
+          {coverPreview && (
             <img
-              src={cover}
+              src={coverPreview}
               alt="Book cover preview"
               width="120"
             />
@@ -110,7 +159,7 @@ export default function UploadModal({
           </button>
 
           <button onClick={handleSubmit}>
-            Add Book
+            {book ? "Save Changes" : "Add Book"}
           </button>
         </div>
 

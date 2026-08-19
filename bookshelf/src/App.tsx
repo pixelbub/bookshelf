@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Home from "./pages/Home";
 import { books } from "./data/books";
 import type { Book } from "./types/book";
 import UploadModal from "./components/UploadModal";
+import { addBook, getBooks, deleteBook, updateBook } from "./db/database";
 
 function App() {
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
@@ -11,6 +12,7 @@ function App() {
   const [library, setLibrary] = useState<Book[]>(books);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [showUploadModal, setShowUploadModal] = useState(false);
+  const [editingBook, setEditingBook] = useState<Book | null>(null);
 
   const filteredBooks = library.filter((book) => {
     const query = searchQuery.toLowerCase();
@@ -66,15 +68,67 @@ function App() {
     */
   };
 
-  const handleAddBook = (newBook: Book) => {
+  const handleAddBook = async (newBook: Book) => {
+
+    await addBook(newBook);
+
     setLibrary((currentLibrary) => [
       ...currentLibrary,
       newBook,
     ]);
 
     setSelectedFile(null);
+    setShowUploadModal(false); 
+  };
+
+  const handleDeleteBook = async (id: number) => {
+    const confirmed = window.confirm(
+      "Are you sure you want to delete this book?"
+    );
+
+    if(!confirmed) return;
+
+    await deleteBook(id);
+
+    setLibrary((currentLibrary) => 
+      currentLibrary.filter((book) => book.id !== id)
+    );
+  };
+
+  const handleEditBook = (book: Book) => {
+    setEditingBook(book);
+    setShowUploadModal(true);
+  };
+
+  const handleUpdateBook = async (updatedBook:Book) => {
+    await updateBook(updatedBook);
+
+    setLibrary((currentLibrary) =>
+      currentLibrary.map((book) =>
+        book.id == updatedBook.id
+          ? updatedBook
+          : book
+      )
+    );
+
+    setEditingBook(null);
     setShowUploadModal(false);
   };
+
+  useEffect(() => {
+    async function loadBooks() {
+      
+      const savedBooks = await getBooks();
+      
+      if(savedBooks.length > 0){
+        setLibrary([...books, ...savedBooks]);
+      }
+    
+    }
+
+    loadBooks();
+
+  }, []); //idk if this should be here
 
   
 
@@ -127,16 +181,20 @@ function App() {
         books={library}
         filteredBooks={filteredBooks}
         searchQuery={searchQuery}
+        onDelete={handleDeleteBook}
+        onEdit={handleEditBook}
       />
 
-      {showUploadModal && selectedFile && (
+      {showUploadModal && (
         <UploadModal
-          file={selectedFile}
+          file={selectedFile ?? undefined}
+          book={editingBook ?? undefined}
           onClose={() => {
             setSelectedFile(null);
             setShowUploadModal(false);
           }}
           onAddBook={handleAddBook}
+          onUpdateBook={handleUpdateBook}
         />
       )}
 

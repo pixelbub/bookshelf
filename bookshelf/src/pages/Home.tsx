@@ -1,14 +1,18 @@
 import BookCard from "../components/BookCard";
 import StatsCard from "../components/StatsCard";
 import type { Book } from "../types/book";
+import { useState } from "react";
 
 type HomeProps = {
   books: Book[];
   filteredBooks: Book[];
   searchQuery: string;
+  onDelete: (id: number) => void;
+  onEdit: (book: Book) => void;
 };
 
-export default function Home({ books, filteredBooks, searchQuery }: HomeProps) {
+export default function Home({ books, filteredBooks, searchQuery, onDelete, onEdit}: HomeProps) {
+  const [openMenuId, setOpenMenuId] = useState<number | null>(null);
   const currentlyReading = books.slice(0, 3);
 
   return (
@@ -56,7 +60,7 @@ export default function Home({ books, filteredBooks, searchQuery }: HomeProps) {
 
         <div className="bookshelf">
           {filteredBooks.map((book) => (
-            <BookCard key={book.id} book={book} />
+            <BookCard key={book.id} book={book} onDelete={onDelete} onEdit={onEdit} openMenuId={openMenuId} setOpenMenuId={setOpenMenuId}/>
             ))}
         </div>
 
@@ -69,7 +73,7 @@ export default function Home({ books, filteredBooks, searchQuery }: HomeProps) {
 
         <div className="bookshelf">
           {currentlyReading.map((book) => (
-            <BookCard key={book.id} book={book} />
+            <BookCard key={book.id} book={book} onDelete={onDelete} onEdit={onEdit} openMenuId={openMenuId} setOpenMenuId={setOpenMenuId}/>
           ))}
         </div>
       </section>

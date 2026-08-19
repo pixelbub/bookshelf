@@ -17,7 +17,7 @@
 
   font: 18px/145% var(--sans);
   letter-spacing: 0.18px;
-  color-scheme: light dark;
+  color-scheme:  dark;
   color: var(--text);
   background: var(--bg);
   font-synthesis: none;
@@ -303,10 +303,6 @@ width: 100%;
   box-shadow: 0 25px 60px rgba(0, 0, 0, 0.3);
 }
 
-.page {
-
-}
-
 .no-results{
   border: 2px dashed;
   border-radius: 2px 40px;
@@ -339,4 +335,32 @@ width: 100%;
   border-radius: 16px;
 
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+}
+
+.book-menu {
+  position: absolute;
+  top: 40px;
+  right: 10px;
+  background-color: #1f2028;
+  border-radius: 10px;
+  padding: 6px;
+
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
+
+  display: flex;
+  flex-direction: column;
+
+  z-index: 100;
+}
+
+.book-menu button {
+  border: none;
+  background: none;
+  padding: 8px 14px;
+  text-align: left;
+  cursor: pointer;
+}
+
+.book-menu button:hover {
+  background: #2e303a;
 }
